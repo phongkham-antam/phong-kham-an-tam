@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Lịch Khám Bệnh - Phòng Khám Tâm An</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .booking-header {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .btn-submit {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .btn-submit:hover {
+            background-color: #0b5ed7;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Trang -->
+    <div class="booking-header text-center">
+        <div class="container">
+            <h1 class="fw-bold mb-2"><i class="fa-solid fa-calendar-days me-2"></i>ĐẶT LỊCH KHÁM BỆNH</h1>
+            <p class="lead mb-0">Chủ động thời gian - Nhanh chóng - Tiện lợi cùng Phòng Khám Tâm An</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <form id="bookingForm" action="/dat-lich/luu" method="POST">
+            <div class="row g-4">
+                
+                <!-- CỘT TRÁI: FORM NHẬP LIỆU CỦA BỆNH NHÂN -->
+                <div class="col-lg-8">
+                    <div class="card card-custom p-4">
+                        <h4 class="fw-bold text-primary mb-4"><i class="fa-solid fa-user-pen me-2"></i>Thông tin đặt khám</h4>
+                        
+                        <!-- Thông tin cá nhân -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Họ và tên bệnh nhân <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Ví dụ: Nguyễn Văn A" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Ví dụ: 0912345678" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Ngày sinh</label>
+                                <input type="date" class="form-control" id="dob" name="dob">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Giới tính</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Chọn Khoa & Bác sĩ -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Chọn Chuyên Khoa <span class="text-danger">*</span></label>
+                                <select class="form-select" id="departmentSelect" name="department" required>
+                                    <option value="" selected disabled>-- Chọn chuyên khoa --</option>
+                                    <option value="Khoa Nội Tổng Hợp">Khoa Nội Tổng Hợp</option>
+                                    <option value="Khoa Ngoại Tổng Hợp">Khoa Ngoại Tổng Hợp</option>
+                                    <option value="Khoa Mắt">Khoa Mắt</option>
+                                    <option value="Khoa Răng - Hàm - Mặt">Khoa Răng - Hàm - Mặt</option>
+                                    <option value="Khoa Tai - Mũi - Họng">Khoa Tai - Mũi - Họng</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Chọn Bác sĩ</label>
+                                <select class="form-select" id="doctorSelect" name="doctorName">
+                                    <option value="" selected>-- Chọn bác sĩ (Không bắt buộc) --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Chọn Ngày & Khung giờ khám -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Ngày khám dự kiến <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Khung giờ khám <span class="text-danger">*</span></label>
+                                <select class="form-select" id="timeSlot" name="timeSlot" required>
+                                    <option value="" selected disabled>-- Chọn khung giờ --</option>
+                                    <option value="07:30 - 08:30">07:30 - 08:30</option>
+                                    <option value="08:30 - 09:30">08:30 - 09:30</option>
+                                    <option value="09:30 - 10:30">09:30 - 10:30</option>
+                                    <option value="10:30 - 11:30">10:30 - 11:30</option>
+                                    <option value="13:30 - 14:30">13:30 - 14:30</option>
+                                    <option value="14:30 - 15:30">14:30 - 15:30</option>
+                                    <option value="15:30 - 16:30">15:30 - 16:30</option>   
+                                    <option value="16:30 - 17:30">16:30 - 17:30</option>          
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Triệu chứng / Ghi chú -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Triệu chứng bệnh / Ghi chú thêm</label>
+                            <textarea class="form-control" id="note" name="note" rows="3" placeholder="Mô tả sơ lược triệu chứng hoặc yêu cầu đặc biệt..."></textarea>
+                        </div>
+
+                        <!-- Nút bấm gọi modal xác nhận trước khi submit -->
+                        <button type="button" class="btn btn-submit w-100 mt-3" onclick="showConfirmationModal()">
+                            <i class="fa-solid fa-circle-check me-2"></i>Xác Nhận Đặt Lịch Khám
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI: THẺ TÓM TẮT & HƯỚNG DẪN -->
+                <div class="col-lg-4">
+                    <div class="card card-custom p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-headset text-primary me-2"></i>Hỗ trợ nhanh</h5>
+                        <p class="text-muted small mb-3">Nếu bạn cần hỗ trợ thay đổi lịch hẹn hoặc có thắc mắc, vui lòng liên hệ qua email:</p>
+                        <p class="text-muted small mb-2"><i class="fa-solid fa-envelope text-primary me-1"></i> <strong>Email:</strong> lienhe@antamclinic.vn</p>
+                        <p class="text-muted small mb-0"><i class="fa-solid fa-location-dot text-danger me-1"></i> <strong>Cơ sở chính:</strong> 18 Giải Phóng, Phương Mai, Đống Đa, Hà Nội</p>
+                    </div>
+
+                    <div class="card card-custom p-4 mb-4 bg-light border-0">
+                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-triangle-exclamation text-warning me-2"></i>Lưu ý quan trọng</h5>
+                        <ul class="ps-3 text-muted small mb-0">
+                            <li class="mb-2">Vui lòng đến trước <strong>15 phút</strong> so với khung giờ đã đặt để hoàn tất thủ tục check-in.</li>
+                            <li class="mb-2">Mang theo căn cước công dân, thẻ BHYT (nếu có) và các kết quả xét nghiệm cũ.</li>
+                            <li>Lịch hẹn có hiệu lực trong vòng 30 phút kể từ giờ hẹn.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- MODAL XÁC NHẬN THÔNG TIN (TRƯỚC KHI SUBMIT) -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-custom p-3">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary" id="confirmModalLabel">
+                        <i class="fa-solid fa-clipboard-check me-2"></i>Xác nhận thông tin đặt lịch
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">Vui lòng kiểm tra lại toàn bộ thông tin đăng ký bên dưới:</p>
+                    <ul class="list-group list-group-flush small">
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Họ tên:</span>
+                            <strong id="lblFullName"></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Số điện thoại:</span>
+                            <strong id="lblPhone"></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Ngày sinh / Giới tính:</span>
+                            <strong><span id="lblDob"></span> - <span id="lblGender"></span></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Chuyên khoa:</span>
+                            <strong id="lblDepartment" class="text-primary"></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Bác sĩ khám:</span>
+                            <strong id="lblDoctor"></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Thời gian khám:</span>
+                            <strong class="text-danger"><span id="lblTimeSlot"></span> ngày <span id="lblAppointmentDate"></span></strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Triệu chứng/Ghi chú:</span>
+                            <strong id="lblNote" class="text-truncate" style="max-width: 200px;"></strong>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-pen-to-square me-1"></i> Chỉnh sửa
+                    </button>
+                    <button type="button" class="btn btn-submit px-4" onclick="submitOfficialForm()">
+                        <i class="fa-solid fa-check me-1"></i> Đồng ý
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG BÁO ĐẶT LỊCH THÀNH CÔNG (POPUP GIỮA MÀN HÌNH) -->
+    <div class="modal fade" id="successPopupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-custom p-4 text-center position-relative">
+                <!-- Nút dấu X ở góc phải -->
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                
+                <div class="my-2">
+                    <i class="fa-solid fa-circle-check text-success" style="font-size: 50px;"></i>
+                </div>
+                <h4 class="fw-bold text-success mb-3">Đặt lịch thành công!</h4>
+                <p class="text-muted mb-3">Cảm ơn quý khách <b><span th:text="${datKham != null ? datKham.hoTen : ''}"></span></b> đã đặt lịch khám thành công.</p>
+                
+                <div class="bg-light p-3 rounded text-start mb-3 small">
+                    <p class="mb-1"><i class="fa-regular fa-calendar text-primary me-2"></i> <strong>Ngày khám:</strong> <span th:text="${datKham != null ? datKham.ngayKham : ''}"></span></p>
+                    <p class="mb-0"><i class="fa-regular fa-clock text-primary me-2"></i> <strong>Giờ khám:</strong> <span th:text="${datKham != null ? datKham.gioKham : ''}"></span></p>
+                </div>
+
+                <button type="button" class="btn btn-success w-100 py-2 fw-semibold" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script xử lý Modal Xác Nhận & Đồng bộ Khoa/Bác sĩ -->
+    <script>
+        function showConfirmationModal() {
+            const form = document.getElementById('bookingForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            document.getElementById('lblFullName').textContent = document.getElementById('fullName').value;
+            document.getElementById('lblPhone').textContent = document.getElementById('phone').value;
+            document.getElementById('lblDob').textContent = document.getElementById('dob').value || 'Không có';
+            document.getElementById('lblGender').textContent = document.getElementById('gender').value;
+            document.getElementById('lblDepartment').textContent = document.getElementById('departmentSelect').value;
+            
+            let doctorVal = document.getElementById('doctorSelect').value;
+            document.getElementById('lblDoctor').textContent = doctorVal ? doctorVal : 'Bác sĩ phân công ngẫu nhiên';
+            
+            document.getElementById('lblTimeSlot').textContent = document.getElementById('timeSlot').value;
+            document.getElementById('lblAppointmentDate').textContent = document.getElementById('appointmentDate').value;
+            
+            let noteVal = document.getElementById('note').value;
+            document.getElementById('lblNote').textContent = noteVal ? noteVal : 'Không có';
+
+            var myModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            myModal.show();
+        }
+
+        function submitOfficialForm() {
+            document.getElementById('bookingForm').submit();
+        }
+
+        const doctorsByDepartment = {
+            "Khoa Nội Tổng Hợp": [
+                "TS.BS. Nguyễn Văn Minh",
+                "ThS.BS. Lê Thị Lan",
+                "BS.CKII. Trần Thanh Tùng",
+                "BS.CKI. Phạm Thị Mai",
+                "BS. Hoàng Văn Hải"
+            ],
+            "Khoa Ngoại Tổng Hợp": [
+                "BS.CKII. Trần Quốc Dũng",
+                "ThS.BS. Phạm Anh Tú",
+                "BS.CKI. Ngô Văn Đức",
+                "BS.CKI. Lê Hoàng Nam",
+                "BS. Vũ Đình Khoa"
+            ],
+            "Khoa Mắt": [
+                "BS.CKI. Hoàng Mai Hoa",
+                "ThS.BS. Đỗ Minh Khang",
+                "BS. Nguyễn Phương Thảo"
+            ],
+            "Khoa Răng - Hàm - Mặt": [
+                "ThS.BS. Vũ Hoàng Nam",
+                "BS.CKI. Trịnh Bảo Ngọc",
+                "BS. Bùi Anh Tuấn"
+            ],
+            "Khoa Tai - Mũi - Họng": [
+                "BS.CKII. Lý Văn Thái",
+                "ThS.BS. Nguyễn Kim Anh",
+                "BS. Đặng Quốc Huy"
+            ]
+        };
+
+        const departmentSelect = document.getElementById('departmentSelect');
+        const doctorSelect = document.getElementById('doctorSelect');
+
+        departmentSelect.addEventListener('change', function() {
+            const selectedDepartment = this.value;
+            
+            doctorSelect.innerHTML = '<option value="" selected>-- Chọn bác sĩ (Không bắt buộc) --</option>';
+
+            if (selectedDepartment && doctorsByDepartment[selectedDepartment]) {
+                doctorsByDepartment[selectedDepartment].forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor;
+                    option.textContent = doctor;
+                    doctorSelect.appendChild(option);
+                });
+            }
+        });
+    </script>
+    
+    <!-- Script xử lý URL Params & Tự động bật Popup Thành Công -->
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Tự động bật Popup khi Controller trả về successMessage
+            var hasSuccess = /*[[${successMessage}]]*/ false;
+            if (hasSuccess) {
+                var successModal = new bootstrap.Modal(document.getElementById('successPopupModal'));
+                successModal.show();
+            }
+
+            // Xử lý tham số truyền vào qua URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const department = urlParams.get('department');
+            const doctor = urlParams.get('doctor');
+
+            const deptSelect = document.getElementById('departmentSelect');
+            const docSelect = document.getElementById('doctorSelect');
+
+            if (department && deptSelect) {
+                let keyword = "";
+                if (department.includes("Nội")) keyword = "Nội";
+                else if (department.includes("Ngoại")) keyword = "Ngoại";
+                else if (department.includes("Mắt")) keyword = "Mắt";
+                else if (department.includes("Răng")) keyword = "Răng";
+                else if (department.includes("Tai")) keyword = "Tai";
+                else keyword = department.substring(0, 5);
+
+                for (let option of deptSelect.options) {
+                    if (option.value.includes(keyword) || option.text.includes(keyword)) {
+                        deptSelect.value = option.value;
+                        break;
+                    }
+                }
+
+                const changeEvent = new Event('change', { bubbles: true });
+                deptSelect.dispatchEvent(changeEvent);
+            }
+
+            if (doctor && docSelect) {
+                setTimeout(() => {
+                    let optionExists = Array.from(docSelect.options).some(option => option.value === doctor || option.text === doctor);
+                    if (!optionExists) {
+                        let opt = document.createElement('option');
+                        opt.value = doctor;
+                        opt.text = doctor;
+                        docSelect.add(opt);
+                    }
+                    docSelect.value = doctor;
+                }, 250);
+            }
+        });
+    </script>
+</body>
+</html>

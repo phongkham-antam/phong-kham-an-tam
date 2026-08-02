@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phòng Khám Đa Khoa An Tâm</title>
+    <link rel="stylesheet" href="cot.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --blue-main: #0087d1; 
+            --bright-yellow: #FFD700; 
+            --text-gray: #cccccc;
+        }
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+
+        /* --- HEADER --- */
+        header { background: white; padding: 20px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; }
+        .logo-section { display: flex; align-items: center; gap: 20px; color: var(--blue-main); font-weight: 800; font-size: 22px; }
+        .logo-section img { height: 100px; }
+        .logo-section div { font-size: 26px; line-height: 1.2; }
+        
+        .slogan { font-family: 'Lobster', cursive; font-size: 65px; text-align: center; background: linear-gradient(to bottom, #FFD700, #F39C12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.2)); margin: 15px 0; }
+        
+        .auth-buttons { display: flex; gap: 10px; }
+        .btn-auth { padding: 8px 20px; border: 2px solid var(--blue-main); background: white; color: var(--blue-main); font-weight: bold; cursor: pointer; border-radius: 5px; text-decoration: none; display: inline-block; }
+        .btn-login { padding: 8px 20px; border: 2px solid var(--blue-main); background: white; color: var(--blue-main); font-weight: bold; border-radius: 5px; text-decoration: none; display: inline-block; }
+        .btn-register { background: var(--blue-main); color: white; padding: 8px 20px; font-weight: bold; border-radius: 5px; text-decoration: none; display: inline-block; }
+
+        /* --- MENU --- */
+        nav { padding: 20px; text-align: center; }
+        nav ul { display: flex; justify-content: center; gap: 15px; list-style: none; padding: 0; position: relative; }
+        nav ul li a { background-color: var(--blue-main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        nav ul li a:hover { background-color: #005f93; }
+
+        /* --- CSS CHO MENU THẢ XUỐNG (DROPDOWN) --- */
+        nav ul li.dropdown {
+            position: relative;
+        }
+
+        nav ul li.dropdown .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #ffffff;
+            min-width: 240px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 10px 0;
+            z-index: 9999;
+            list-style: none;
+            text-align: left;
+            margin-top: 5px;
+        }
+
+        nav ul li.dropdown .dropdown-menu li {
+            width: 100%;
+            margin: 0;
+        }
+
+        nav ul li.dropdown .dropdown-menu li a {
+            background-color: transparent !important;
+            color: #333333 !important;
+            padding: 10px 20px !important;
+            display: block !important;
+            font-weight: 500 !important;
+            border-radius: 0 !important;
+            white-space: nowrap;
+        }
+
+        nav ul li.dropdown .dropdown-menu li a:hover {
+            background-color: #f0f7ff !important;
+            color: var(--blue-main) !important;
+        }
+
+        nav ul li.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* --- BANNER CHÍNH --- */
+        .slogan-vang { color: #d4ac0d; font-size: 30px; font-weight: bold; text-align: center; margin: 25px 0 15px 0; }
+        .banner-img { text-align: center; margin-bottom: 40px; }
+        .banner-img img { width: 100%; max-width: 900px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        /* --- CONTENT BANNER --- */
+        .content-banner { background-color: var(--blue-main); color: white; text-align: center; padding: 60px 20px; }
+        .content-banner h2 { font-size: 40px; margin: 20px 0; }
+        .content-banner p { font-size: 18px; }
+        .btn-start { background-color: #f39c12; color: white; padding: 15px 35px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        
+        .info-grid { display: flex; max-width: 1200px; margin: 40px auto 0 auto; align-items: center; gap: 60px; padding: 20px; text-align: left; }
+        .info-left { flex: 1; }
+        .info-left h3 { font-size: 32px !important; margin-bottom: 25px; }
+        .info-left ul { font-size: 18px; line-height: 2.2; list-style: none; padding: 0; }
+        .info-right { flex: 1.2; }
+        .info-right img { width: 100%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+
+        /* --- 5 KHOA THẾ MẠNH --- */
+        .tieu-de-trang { text-align: center; font-size: 32px; color: #333; margin: 40px 0 20px 0; }
+        .khoa-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            max-width: 1250px;
+            margin: 0 auto 50px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .khoa-item {
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .khoa-icon { font-size: 32px; margin-bottom: 10px; }
+        .khoa-item strong { color: var(--blue-main); font-size: 15px; display: block; margin-bottom: 8px; }
+        .khoa-item p { color: #444; font-size: 12px; line-height: 1.4; margin: 0; }
+        .khoa-item:hover { transform: translateY(-5px); border-color: var(--blue-main); box-shadow: 0 6px 18px rgba(0,119,194,0.15); }
+
+        /* --- FOOTER ĐEN --- */
+        .footer-section { background-color: #1a1a1a; color: #ffffff; padding: 60px 20px; border-top: 5px solid var(--blue-main); }
+        .footer-container { display: flex; max-width: 1200px; margin: auto; gap: 40px; }
+        .footer-box { flex: 1; }
+        .footer-box h3 { color: var(--blue-main); margin-bottom: 15px; }
+        .footer-box p { color: var(--text-gray); margin: 8px 0; }
+        .btn-social { background: var(--blue-main); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 10px; }
+        .copyright { text-align: center; margin-top: 40px; font-size: 14px; color: #666; border-top: 1px solid #333; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-bar">
+            <div class="logo-section">
+                <img src="/l2.jpeg" alt="Logo">
+                <div>AN TÂM<br>PHÒNG KHÁM ĐA KHOA</div>
+            </div>
+            <div class="auth-buttons">
+                <a href="/dang_nhap" class="btn-login">Đăng nhập</a>
+                <a href="/dang_ky" class="btn-register">Đăng ký</a>
+            </div>
+        </div>
+        <div class="slogan">An Tâm cho mọi nhà</div>
+    </header>
+
+<nav>
+    <ul>
+        <li><a href="/gioi_thieu">Giới thiệu</a></li>
+        <li class="dropdown">
+            <a href="#">Chuyên khoa</a>
+            <ul class="dropdown-menu">
+                <li><a href="/khoa_noi">Khoa Nội</a></li>
+                <li><a href="/khoa_ngoai">Khoa Ngoại</a></li>
+                <li><a href="/khoa_mat">Khoa Mắt</a></li>
+                <li><a href="/khoa_da_lieu">Khoa Da liễu</a></li>
+                <li><a href="/khoa_rang_ham_mat">Khoa Răng - Hàm - Mặt</a></li>
+            </ul>
+        </li>
+        <li><a href="/doi_ngu_bac_si">Đội ngũ bác sĩ</a></li>
+        <li><a href="/dat_lich_kham_benh"> Đặt lịch khám bệnh</a></li>
+        <li><a href="/lich_su_dang_ky">Lịch sử đăng ký </a></li>
+        <li><a href="/lien_he">Liên hệ</a></li>
+    </ul>
+</nav>
+
+    <!-- Slogan phụ và Ảnh trang chủ -->
+    <p class="slogan-vang">Phòng khám Đa khoa An Tâm - Nơi gửi gắm niềm tin sức khỏe.</p>
+    <div class="banner-img">
+        <img src="anh_trang_chu.png" alt="Phòng khám An Tâm">
+    </div>
+
+    <section class="content-banner">
+        <p>CHĂM SÓC BẰNG CẢ TRÁI TIM</p>
+        <h2>Đặt Lịch Khám Bệnh Trực Tuyến<br>Nhanh Chóng & Tiện Lợi</h2>
+        <button class="btn-start">Bắt đầu đặt lịch →</button>
+
+        <div class="info-grid">
+            <div class="info-left">
+                <h3>Vì sao chọn An Tâm?</h3>
+                <ul>
+                    <li>✔️ Đội ngũ bác sĩ chuyên khoa giỏi</li>
+                    <li>✔️ Trang thiết bị y tế tiêu chuẩn quốc tế</li>
+                    <li>✔️ Quy trình đặt lịch ưu tiên, không chờ đợi</li>
+                    <li>✔️ Không gian khám bệnh sạch sẽ, hiện đại</li>
+                </ul>
+            </div>
+            <div class="info-right">
+                <img src="/anh_bia.jpeg" alt="Không gian phòng khám">
+            </div>
+        </div>
+    </section>
+         
+    <!-- Phần 5 khoa thế mạnh chia 5 cột song song -->
+    <h3 class="tieu-de-trang">Thế mạnh của chúng tôi</h3>
+    <div class="khoa-container">
+        <div class="khoa-item">
+            <div class="khoa-icon">🩺</div>
+            <strong>Khoa Nội</strong>
+            <p>Khám và điều trị các bệnh lý nội khoa, tim mạch, tiêu hóa, hô hấp.</p>
+        </div>
+        <div class="khoa-item">
+            <div class="khoa-icon">💉</div>
+            <strong>Khoa Ngoại</strong>
+            <p>Điều trị các bệnh lý ngoại khoa, phẫu thuật và chăm sóc sau mổ.</p>
+        </div>
+        <div class="khoa-item">
+            <div class="khoa-icon">👁️</div>
+            <strong>Khoa Mắt</strong>
+            <p>Khám và điều trị các bệnh về mắt, thị lực.</p>
+        </div>
+        <div class="khoa-item">
+            <div class="khoa-icon">🌿</div>
+            <strong>Khoa Da liễu</strong>
+            <p>Điều trị các bệnh về da, mụn, dị ứng và thẩm mỹ da.</p>
+        </div>
+        <div class="khoa-item">
+            <div class="khoa-icon">🦷</div>
+            <strong>Khoa Răng - Hàm - Mặt</strong>
+            <p>Chăm sóc răng miệng, điều trị nha khoa.</p>
+        </div>
+    </div>
+
+    <footer class="footer-section">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>Địa chỉ & Liên hệ</h3>
+                <p>📍 18 Giải Phóng, Phương Mai, Đống Đa, Hà Nội</p>
+                <p>📧 Email: lienhe@antamclinic.vn</p>
+                <p>⏰ Giờ làm việc: T2 - CN (07:30 - 17:30)</p>
+            </div>
+            <div class="footer-box">
+                <h3>Cam kết từ chúng tôi</h3>
+                <p style="font-style: italic;">"Sức khỏe của bạn là niềm hạnh phúc của chúng tôi. Chúng tôi không chỉ khám bệnh, chúng tôi trao gửi sự an tâm trong từng chẩn đoán."</p>
+            </div>
+            <div class="footer-box">
+                <h3>Kết nối cùng An Tâm</h3>
+                <p>Cập nhật kiến thức y khoa và ưu đãi khám bệnh mỗi ngày.</p>
+                <button class="btn-social">Truy cập Fanpage</button>
+            </div>
+        </div>
+        <div class="copyright">© 2026 Bản quyền thuộc về Phòng Khám Đa Khoa An Tâm</div>
+    </footer>
+
+</body>
+</html>
