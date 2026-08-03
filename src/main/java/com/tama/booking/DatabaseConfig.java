@@ -14,6 +14,7 @@ public class DatabaseConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
+        // Ưu tiên đọc biến môi trường kết nối trên Railway
         String databaseUrl = System.getenv("DATABASE_URL");
         if (databaseUrl == null || databaseUrl.isEmpty()) {
             databaseUrl = System.getenv("MYSQL_URL");
@@ -45,14 +46,13 @@ public class DatabaseConfig {
             }
         }
 
-        // --- CẤU HÌNH CHO MÁY PHỤ KẾT NỐI SANG MÁY CHÍNH ---
+        // PHẦN NÀY CHỈ DÙNG KHI CHẠY Ở MÁY PHỤ Ở NHÀ
         String localHostIp = "172.31.130.17"; 
-        
         return DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .url("jdbc:mysql://" + localHostIp + ":3306/booking?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true")
                 .username("root")
-                .password("") // Điền mật khẩu MySQL của máy chính nếu có
+                .password("")
                 .build();
     }
 }
