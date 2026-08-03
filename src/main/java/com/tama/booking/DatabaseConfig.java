@@ -21,8 +21,9 @@ public class DatabaseConfig {
 
         if (databaseUrl != null && !databaseUrl.isEmpty()) {
             try {
-                if (databaseUrl.startsWith("mysql://")) {
-                    URI uri = new URI(databaseUrl);
+                String cleanUrl = databaseUrl.replace("jdbc:", "");
+                if (cleanUrl.startsWith("mysql://")) {
+                    URI uri = new URI(cleanUrl);
                     String userInfo = uri.getUserInfo();
                     String username = userInfo != null ? userInfo.split(":")[0] : "root";
                     String password = userInfo != null && userInfo.contains(":") ? userInfo.split(":")[1] : "";
@@ -44,11 +45,14 @@ public class DatabaseConfig {
             }
         }
 
+        // --- CẤU HÌNH CHO MÁY PHỤ KẾT NỐI SANG MÁY CHÍNH ---
+        String localHostIp = "172.31.130.17"; 
+        
         return DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3306/booking?useSSL=false&serverTimezone=UTC")
+                .url("jdbc:mysql://" + localHostIp + ":3306/booking?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true")
                 .username("root")
-                .password("")
+                .password("") // Điền mật khẩu MySQL của máy chính nếu có
                 .build();
     }
 }
