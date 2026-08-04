@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Giới thiệu - Phòng khám An Tâm</title>
+    <!-- Thêm thư viện FontAwesome để hiển thị icon ngôi nhà -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/cot.css}">
     <style>
         body { 
@@ -12,21 +14,19 @@
             background-color: #f9f9f9; 
         }
         
-        /* Menu điều hướng */
-        .menu-nav { 
-            padding: 15px 20px; 
-            background-color: #0077c2; 
-            display: flex; 
-            align-items: center; 
+        /* Menu điều hướng nằm sát mép trên, chữ không gạch chân và đồng bộ màu */
+        .navbar-custom { 
+            background-color: #0077c2 !important; 
+            padding: 8px 20px; 
         }
-        .back-link { 
-            color: white !important; 
+        .navbar-brand, .navbar-brand:hover, .navbar-brand:focus { 
+            color: #ffffff !important; 
             font-size: 18px; 
             font-weight: bold; 
-            text-decoration: none; 
+            text-decoration: none !important; 
         }
-        .back-link:hover { 
-            text-decoration: underline; 
+        .navbar-brand span {
+            text-decoration: none !important;
         }
 
         /* Container chia 2 cột chung */
@@ -67,10 +67,9 @@
             height: auto;
             border-radius: 12px; 
             border: none !important; 
-        
         }
 
-        /* Định dạng ảnh Full width (ảnh 4) - Đã sửa dứt điểm lỗi 3 dòng kẻ mờ */
+        /* Định dạng ảnh Full width (ảnh 4) */
         .image-full-width {
             text-align: center;
             margin: 50px auto 30px auto;
@@ -80,12 +79,11 @@
         }
         .image-full-width img {
             width: 100%;
-            height: auto; /* Dùng height auto thay vì max-height + cover để tránh xén méo ảnh */
+            height: auto;
             display: block;
             border-radius: 15px;
             border: none !important;
             outline: none !important;
-           
         }
 
         /* Định dạng chữ màu xanh, to rõ */
@@ -130,7 +128,6 @@
             max-width: 550px; 
             border-radius: 12px; 
             border: none !important;
-          
         }
 
         /* Phần liên hệ / Lịch làm việc nền xanh */
@@ -164,15 +161,16 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm" style="background-color: #0d6efd !important;">
-    <div class="container d-flex align-items-center" style="min-height: 50px;">
-        <a class="navbar-brand text-decoration-none d-flex align-items-center" href="/" style="margin-left: 20px;">
-            <span class="d-flex align-items-center fw-bold" style="color: #ffffff !important; font-size: 22px; text-decoration: none !important;">
-                <i class="fa-solid fa-house me-2" style="color: #ffffff !important; font-size: 22px;"></i>Trang Chủ
-            </span>
-        </a>
-    </div>
-</nav>
+    <!-- Thanh điều hướng thu gọn, dính sát mép trên, không gạch chân -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm">
+        <div class="container-fluid" style="padding-left: 10px;">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="fa-solid fa-house" style="color: #ffffff !important; font-size: 18px; margin-right: 8px;"></i>
+                <span>Trang Chủ</span>
+            </a>
+        </div>
+    </nav>
+
     <!-- Phần 1: Giới thiệu chung -->
     <div class="gioi-thieu-container">
         <div class="text-content-blue-1">
@@ -199,7 +197,7 @@
         </div>
     </div>
 
-    <!-- Ảnh 4 full to tràn màn hình (Đã fix hoàn toàn lỗi đường kẻ mờ) -->
+    <!-- Ảnh 4 full to tràn màn hình -->
     <div class="image-full-width">
         <img th:src="@{anh_gioi_thieu_4.png}" alt="Không gian phòng khám An Tâm">
     </div>

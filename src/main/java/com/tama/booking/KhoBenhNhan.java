@@ -7,4 +7,5 @@ import java.util.List;
 @Repository
 public interface KhoBenhNhan extends JpaRepository<Benhnhan, Long> {
     List<Benhnhan> findByEmail(String email);
+    boolean existsByBacSiIdAndNgayKhamAndGioKham(String bacSiId, String ngayKham, String gioKham);
 }

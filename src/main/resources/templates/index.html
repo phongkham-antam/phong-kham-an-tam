@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Phòng Khám Đa Khoa An Tâm</title>
@@ -22,18 +22,88 @@
         
         .slogan { font-family: 'Lobster', cursive; font-size: 65px; text-align: center; background: linear-gradient(to bottom, #FFD700, #F39C12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.2)); margin: 15px 0; }
         
-        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; position: relative; }
         .btn-auth { padding: 8px 20px; border: 2px solid var(--blue-main); background: white; color: var(--blue-main); font-weight: bold; cursor: pointer; border-radius: 5px; text-decoration: none; display: inline-block; }
         .btn-login { padding: 8px 20px; border: 2px solid var(--blue-main); background: white; color: var(--blue-main); font-weight: bold; border-radius: 5px; text-decoration: none; display: inline-block; }
         .btn-register { background: var(--blue-main); color: white; padding: 8px 20px; font-weight: bold; border-radius: 5px; text-decoration: none; display: inline-block; }
+        
+        /* --- CSS CHO MENU USER DROPDOWN & CHỮ TO --- */
+        .user-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
 
-        /* --- MENU --- */
+        .user-welcome { 
+            font-weight: bold; 
+            color: var(--blue-main); 
+            font-size: 18px; /* Tăng kích thước chữ to hơn */
+            cursor: pointer;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Tạo mũi tên trỏ xuống cạnh tên người dùng */
+        .user-welcome::after {
+            content: "▼";
+            font-size: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Menu ẩn chứa nút đăng xuất */
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 8px 0;
+            z-index: 9999;
+            list-style: none;
+            text-align: left;
+            margin-top: 5px;
+        }
+
+        .user-dropdown-menu li {
+            width: 100%;
+            margin: 0;
+        }
+
+        .user-dropdown-menu li a {
+            background-color: transparent !important;
+            color: #e74c3c !important; /* Đổi màu chữ đăng xuất thành đỏ */
+            padding: 10px 20px !important;
+            display: block !important;
+            font-weight: bold !important;
+            text-decoration: none;
+            border-radius: 0 !important;
+            white-space: nowrap;
+        }
+
+        .user-dropdown-menu li a:hover {
+            background-color: #fff5f5 !important;
+        }
+
+        /* Hiển thị menu khi rê chuột vào khu vực tên người dùng */
+        .user-dropdown-container:hover .user-dropdown-menu {
+            display: block;
+        }
+
+        .user-dropdown-container:hover .user-welcome::after {
+            transform: rotate(180deg); /* Xoay ngược mũi tên khi mở menu */
+        }
+
+        /* --- MENU CHÍNH --- */
         nav { padding: 20px; text-align: center; }
         nav ul { display: flex; justify-content: center; gap: 15px; list-style: none; padding: 0; position: relative; }
         nav ul li a { background-color: var(--blue-main); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
         nav ul li a:hover { background-color: #005f93; }
 
-        /* --- CSS CHO MENU THẢ XUỐNG (DROPDOWN) --- */
+        /* --- CSS CHO MENU THẢ XUỐNG (DROPDOWN) CHUYÊN KHOA --- */
         nav ul li.dropdown {
             position: relative;
         }
@@ -87,7 +157,8 @@
         .content-banner { background-color: var(--blue-main); color: white; text-align: center; padding: 60px 20px; }
         .content-banner h2 { font-size: 40px; margin: 20px 0; }
         .content-banner p { font-size: 18px; }
-        .btn-start { background-color: #f39c12; color: white; padding: 15px 35px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-start { background-color: #f39c12; color: white; padding: 15px 35px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 20px; text-decoration: none; display: inline-block; transition: 0.3s; }
+        .btn-start:hover { background-color: #d68910; }
         
         .info-grid { display: flex; max-width: 1200px; margin: 40px auto 0 auto; align-items: center; gap: 60px; padding: 20px; text-align: left; }
         .info-left { flex: 1; }
@@ -143,9 +214,24 @@
                 <img src="/l2.jpeg" alt="Logo">
                 <div>AN TÂM<br>PHÒNG KHÁM ĐA KHOA</div>
             </div>
+            
+            <!-- Phần hiển thị nút Đăng nhập/Đăng ký HOẶC Xin chào kèm Dropdown Đăng xuất -->
             <div class="auth-buttons">
-                <a href="/dang_nhap" class="btn-login">Đăng nhập</a>
-                <a href="/dang_ky" class="btn-register">Đăng ký</a>
+                <!-- Hiển thị khi CHƯA đăng nhập -->
+                <th:block th:if="${session.tenNguoiDung == null}">
+                    <a href="/dang_nhap" class="btn-login">Đăng nhập</a>
+                    <a href="/dang_ky" class="btn-register">Đăng ký</a>
+                </th:block>
+
+                <!-- Hiển thị khi ĐÃ đăng nhập thành công (Có tên to, mũi tên và menu xổ xuống) -->
+                <th:block th:if="${session.tenNguoiDung != null}">
+                    <div class="user-dropdown-container">
+                        <div class="user-welcome" th:text="'Xin chào, ' + ${session.tenNguoiDung}">Xin chào, User</div>
+                        <ul class="user-dropdown-menu">
+                            <li><a href="/dang_xuat">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                </th:block>
             </div>
         </div>
         <div class="slogan">An Tâm cho mọi nhà</div>
@@ -167,7 +253,6 @@
         <li><a href="/doi_ngu_bac_si">Đội ngũ bác sĩ</a></li>
         <li><a href="/dat_lich_kham_benh"> Đặt lịch khám bệnh</a></li>
         <li><a href="/lich_su_dang_ky">Lịch sử đăng ký </a></li>
-        
     </ul>
 </nav>
 
@@ -180,7 +265,9 @@
     <section class="content-banner">
         <p>CHĂM SÓC BẰNG CẢ TRÁI TIM</p>
         <h2>Đặt Lịch Khám Bệnh Trực Tuyến<br>Nhanh Chóng & Tiện Lợi</h2>
-        <button class="btn-start">Bắt đầu đặt lịch →</button>
+        
+        <!-- Nút bấm đã được chuyển thành thẻ a để trỏ về trang đặt lịch -->
+        <a href="/dat_lich_kham_benh" class="btn-start">Bắt đầu đặt lịch →</a>
 
         <div class="info-grid">
             <div class="info-left">

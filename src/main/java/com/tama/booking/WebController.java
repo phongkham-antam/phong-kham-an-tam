@@ -19,6 +19,11 @@ public class WebController {
     @Autowired
     private KhoBenhNhan khoBenhNhan;
 
+    @Autowired
+    private KhoNguoiDungBenhNhan khoNguoiDungBenhNhan;
+ 
+    @Autowired
+private BenhNhanService BenhNhanService;
     // --- CÁC TRANG GIAO DIỆN TĨNH ---
     @GetMapping("/")
     public String index() {
@@ -77,19 +82,18 @@ public class WebController {
                              @RequestParam("password") String password,
                              Model model) {
         
-        List<Benhnhan> existingUsers = khoBenhNhan.findByEmail(email);
-        if (!existingUsers.isEmpty()) {
+        if (khoNguoiDungBenhNhan.findByEmail(email).isPresent()) {
             model.addAttribute("error", "Email này đã được sử dụng!");
-            return "dang_ky"; 
+            return "dang_ky";
         }
-
-        Benhnhan bn = new Benhnhan();
-        bn.setHoTen(fullName);
-        bn.setEmail(email);
-        bn.setMatKhau(password);
-        bn.setNgayTao(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
         
-        khoBenhNhan.save(bn);
+        NguoiDungBenhNhan nd = new NguoiDungBenhNhan();
+        nd.setHoTen(fullName);
+        nd.setEmail(email);
+        nd.setMatKhau(password);
+        nd.setNgayTao(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
+
+        khoNguoiDungBenhNhan.save(nd);
 
         return "redirect:/dang_nhap";
     }
@@ -106,24 +110,32 @@ public class WebController {
                                       HttpSession session, 
                                       Model model) {
         
-        // Kiểm tra thông tin đăng nhập trong DB
-        List<Benhnhan> users = khoBenhNhan.findByEmail(email);
-        if (users.isEmpty()) {
+        var user = khoNguoiDungBenhNhan.findByEmail(email);
+
+        if (user.isEmpty()) {
             model.addAttribute("error", "Email không tồn tại trong hệ thống!");
             return "dang_nhap";
         }
 
-        // Kiểm tra mật khẩu (Giả sử lấy user đầu tiên tìm thấy)
-        Benhnhan user = users.get(0);
-        if (user.getMatKhau() != null && !user.getMatKhau().equals(password)) {
+        NguoiDungBenhNhan nd = user.get();
+
+        if (!nd.getMatKhau().equals(password)) { 
             model.addAttribute("error", "Mật khẩu không chính xác!");
             return "dang_nhap";
         }
 
-        // Lưu session userEmail
+        // Lưu thông tin vào session để xác thực và hiển thị giao diện
         session.setAttribute("userEmail", email);
+        session.setAttribute("tenNguoiDung", nd.getHoTen()); // Khớp với th:if="${session.tenNguoiDung != null}" ở HTML
         
         return "redirect:/"; 
+    }
+
+    // --- ĐĂNG XUẤT ---
+    @GetMapping("/dang_xuat")
+    public String dangXuat(HttpSession session) {
+        session.invalidate(); // Xóa toàn bộ session khi đăng xuất
+        return "redirect:/";
     }
 
     // --- ĐẶT LỊCH KHÁM BỆNH ---
@@ -136,41 +148,53 @@ public class WebController {
         return "dat_lich_kham_benh"; 
     }
 
-    @PostMapping("/dat-lich/luu")
-    public String xuLyDatLich(@RequestParam("fullName") String fullName,
-                              @RequestParam("phone") String phone,
-                              @RequestParam(value = "department", required = false) String department,
-                              @RequestParam(value = "doctorName", required = false) String doctorName,
-                              @RequestParam(value = "appointmentDate", required = false) String appointmentDate,
-                              @RequestParam(value = "timeSlot", required = false) String timeSlot,
-                              @RequestParam(value = "note", required = false) String note,
-                              HttpSession session,
-                              Model model) {
-        
-        String emailDangNhap = (String) session.getAttribute("userEmail");
-        if (emailDangNhap == null) {
-            return "redirect:/dang_nhap"; 
-        }
-        
-        Benhnhan bn = new Benhnhan();
-        bn.setEmail(emailDangNhap); 
-        bn.setHoTen(fullName);
-        bn.setSoDienThoai(phone);
-        bn.setChuyenKhoaId(department); 
-        bn.setBacSiId(doctorName);    
-        bn.setNgayKham(appointmentDate);
-        bn.setGioKham(timeSlot); 
-        bn.setTrieuChung(note);
-        bn.setStatus("CHO_XAC_NHAN"); // Trạng thái mặc định khi đặt lịch
-        bn.setNgayTao(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
-        
-        khoBenhNhan.save(bn);
+   @PostMapping("/dat-lich/luu")
+public String xuLyDatLich(@RequestParam("fullName") String fullName,
+                          @RequestParam(value = "phone", required = false) String phone,
+                          @RequestParam(value = "department", required = false) String department,
+                          @RequestParam(value = "doctorName", required = false) String doctorName,
+                          @RequestParam(value = "appointmentDate", required = false) String appointmentDate,
+                          @RequestParam(value = "timeSlot", required = false) String timeSlot,
+                          @RequestParam(value = "note", required = false) String note,
+                          HttpSession session,
+                          RedirectAttributes redirectAttributes, // Dùng RedirectAttributes để gửi thông báo qua trang mới
+                          Model model) {
+    
+    String emailDangNhap = (String) session.getAttribute("userEmail");
+    if (emailDangNhap == null) {
+        return "redirect:/dang_nhap"; 
+    }
+    
+    Benhnhan bn = new Benhnhan();
+    bn.setEmail(emailDangNhap); 
+    bn.setHoTen(fullName);
+    bn.setSoDienThoai(phone);
+    bn.setChuyenKhoaId(department); 
+    bn.setBacSiId(doctorName);    
+    bn.setNgayKham(appointmentDate);
+    bn.setGioKham(timeSlot); 
+    bn.setTrieuChung(note);
+    bn.setStatus("CHO_XAC_NHAN");
+    bn.setNgayTao(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
+    
+    // --- GỌI SERVICE ĐỂ LƯU VÀ BẮT LỖI TRÙNG LỊCH ---
+    boolean isSuccess = BenhNhanService.saveBenhNhan(bn);
 
+    if (isSuccess) {
+        // Lưu thành công -> Trả về giao diện kèm thông báo thành công
         model.addAttribute("successMessage", true);
         model.addAttribute("datKham", bn);
-
         return "dat_lich_kham_benh";
+    
+    } else {
+        // Bị trùng lịch -> Gửi thông báo lỗi trực tiếp ra Model
+        model.addAttribute("errorMessage", "Khung giờ này của bác sĩ vừa có bệnh nhân khác đặt trước!");
+        model.addAttribute("datKham", bn); // Giữ lại thông tin khách vừa nhập để đỡ phải gõ lại
+        
+        // Trả thẳng về lại file HTML của trang đặt lịch (không dùng redirect nữa để tránh lỗi 404)
+        return "dat_lich_kham_benh"; 
     }
+}
 
     // --- XEM LỊCH SỬ ---
     @GetMapping("/lich_su_dang_ky")
